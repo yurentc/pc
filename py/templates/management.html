@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>管理页面</title>
+</head>
+<body>
+    <h1>欢迎，{{ username }}！</h1>
+
+    <!-- 添加留言表单 -->
+    <h2>添加留言</h2>
+    <form method="POST" action="/add_message">
+        <input type="text" name="name" placeholder="名称" required>
+        <textarea name="message" placeholder="留言内容" required></textarea>
+        <input type="submit" value="提交留言">
+    </form>
+
+    <!-- 留言列表 -->
+    <h2>留言列表</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>名称</th>
+                <th>留言内容</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for message in messages %}
+            <tr>
+                <td>{{ message.name }}</td>
+                <td>{{ message.message }}</td>
+                <td>
+                    <a href="/edit_message/{{ message.id }}">编辑</a>
+                    <a href="/delete_message/{{ message.id }}">删除</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- 注销按钮 -->
+    <form method="POST" action="/logout">
+        <input type="submit" value="注销">
+    </form>
+</body>
+</html>

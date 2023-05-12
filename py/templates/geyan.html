@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>励志格言</title>
+
+</head>
+<body>
+    <h1>格言列表</h1>
+
+    <ul>
+        {% for row in rows %}
+            <li>{{ row[1] }} -
+                <a href="#" class="delete-link" onclick="submitForm()">删除</a>
+    <div style="display: flex; justify-content: space-between;">
+<form id="delete-form" method="POST" action="/geyan/">
+
+    <input type="hidden" name="quote_id" value="{{ row[0] }}">
+    <input type="hidden" name="action" value="delete">
+</form>
+
+
+
+    </div>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>添加新格言</h2>
+    <form method="POST" action="/geyan/">
+        <input type="text" name="quote" placeholder="请输入新格言">
+        <input type="submit" name="action" value="添加">
+    </form>
+
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+</body>
+
+<script>
+function submitForm() {
+    document.getElementById('delete-form').submit();
+}
+</script>
+</html>

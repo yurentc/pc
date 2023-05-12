@@ -1,0 +1,43 @@
+root = true
+
+[*]
+qz/
+├── py/
+│   ├── __init__.py                    # 初始化应用程序
+│   ├── main.py                         # 主要的应用程序逻辑
+│   ├── study/                          # 学习相关模块文件夹
+│   │   ├── __init__.py                 # 学习模块初始化
+│   │   ├── programming.py              # 编程模块视图
+│   │   ├── language.py                 # 语文模块视图
+│   │   ├── math.py                     # 数学模块视图
+│   │   ├── english.py                  # 英语模块视图
+│   │   └── exercise.py                 # 锻炼模块视图
+│   ├── study_plan/                    # 学习计划模块文件夹
+│   │   ├── __init__.py                # 学习计划模块初始化
+│   │   └── views.py                   # 学习计划模块视图
+│   ├── navigation/                    # 网址模块文件夹
+│   │   ├── __init__.py                # 网址模块初始化
+│   │   └── views.py                   # 网址模块视图
+│   ├── message/                       # 留言模块文件夹
+│   │   ├── __init__.py                # 留言模块初始化
+│   │   └── views.py                   # 留言模块视图
+│   ├── templates/                      # HTML模板文件夹
+│   │   ├── index.html                       # 主页模板
+│   │   ├── study_plan.html                  # 学习计划模板
+│   │   ├── programming.html                 # 编程模板
+│   │   ├── language.html                    # 语文模板
+│   │   ├── math.html                        # 数学模板
+│   │   ├── english.html                     # 英语模板
+│   │   ├── exercise.html                    # 锻炼模板
+│   │   ├── navigation.html                  # 网址模板
+│   │   └── message.html                     # 留言模板
+│   ├── static/                             # 静态文件夹
+│   │   ├── css/                                # CSS文件夹
+│   │   │   └── style.css                         # 全局样式表
+│   │   ├── js/                                    # JavaScript文件夹
+│   │   │   └── script.js                           # 全局脚本
+│   │   └── images/                            # 图片文件夹
+│   │       └── image.jpg                           # 示例图片
+│   └── database/                      # 数据库文件夹
+│       ├── mydatabase.db                 # SQLite数据库文件
+└── run.py                                   # 启动应用程序的脚本

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>留言板</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        form input[type="text"], form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+        }
+
+        form input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            word-wrap: break-word;  /* 文本超宽自动换行 */
+        }
+
+        .message {
+            position: relative;
+            font-size: 14px;
+        }
+
+        .message .time {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            font-size: 12px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <h1>留言板</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <div style="width: 80%; margin: 0 auto;">
+            <input type="text" name="name" placeholder="名称" style="width: 99%;">
+            <textarea name="message" placeholder="留言内容" style="width: 99%; margin: 10px auto;"></textarea>
+        </div>
+        <div style="width: 80%; margin: 0 auto; display: flex; justify-content: space-between;">
+            <input type="submit" value="提交留言" style="width: 30%;">
+            <input type="file" name="image">
+        </div>
+    </form>
+
+    <h2>留言列表</h2>
+    <!-- 留言列表 -->
+    <div style="width: 80%; margin: 0 auto;">
+        <table style="width: 100%; table-layout: fixed;">
+            <colgroup>
+                <col style="width: 20%;">
+                <col style="width: 80%;">
+            </colgroup>
+            <tr>
+                <th>名称：</th>
+                <th>留言内容</th>
+            </tr>
+            {% for message in messages %}
+            <tr>
+                <td style="text-align: center; vertical-align: top; width: auto;">{{ message[1] }}：</td>
+                <td class="message">{{ message[2] }}<span class="time">{{ message[3] }}</span></td>
+            </tr>
+            {% if message[4] %}
+            <tr>
+                <td colspan="2">
+                    <img src="data:image/jpeg;base64,{{ message[3] }}" alt="Image" style="max-width: 100%;">
+                </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>王钦泽的学习宝典 - Acwing</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="shortcut icon" type="image/png"
+        href="https://cdn.acwing.com/media/user/profile/photo/208081_lg_445d4bbb9e.png" />
+</head>
+<body>
+    <div id="header">
+        <h1>王钦泽的学习宝典</h1>
+        <p style="text-align: right;">--这里是我用来记录学习笔记和思考的地方。</p>
+    </div>
+    <div id="sidebar">
+        <h2>分类</h2>
+        <ul>
+            <li><a href="index.html">编程</a></li>
+            <li><a href="#">语文</a></li>
+            <li><a href="#">数学</a></li>
+            <li><a href="#">英语</a></li>
+        </ul>
+        <hr>
+        {{ table|safe }}
+    </div>
+    <div id="main-content">
+        <form>
+            <div id="status"></div>
+            <input type="text" placeholder="请输入题目号" name="id" oninput="updateProblemInfo()">
+            <input type="button" value="添加" onclick="addtable()">
+            <input type="date" name="date" value="" id="date-input">
+        </form>
+        <div id="problem-info"></div>
+        <table id="table">
+            <thead>
+                <tr>
+                    <th>题号</th>
+                    <th>题目</th>
+                    <th>次数</th>
+                    <th>复习时间</th>
+                    <th>开始时间</th>
+                    <th>操作</th>
+                </tr>
+                {% for item in data %}
+                <tr data-id="{{ item['题号'] }}">
+                    <td>{{ item['题号'] }}</td>
+                    <td><a href="{{ item['网址']}}" target="_blank">{{ item['题目'] }}</a></td>
+                    <td>{{ item['次'] }}</td>
+                    <td>{% if item['次'] > 7 %} 完成了 {% else %}{{ item['复习时间'] }}{% endif %}</td>
+                    <td>{{ item['开始时间'] }}</td>
+                    <td><input type="button" value="更新" onclick="updateTabl({{ item['题号'] }})"></td>
+                </tr>
+                {% endfor %}
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!--    <script>-->
+<!--        function updateTabl(id) {-->
+<!--            var row = $('tr[data-id="' + id + '"]');-->
+<!--            var cells = row.find('td');-->
+<!--            var data = {};-->
+<!--            var count = parseInt(cells.eq(2).text());-->
+
+<!--            cells.each(function (index, cell) {-->
+<!--                switch (index) {-->
+<!--                    case 0:-->
+<!--                        data['题号'] = cell.textContent;-->
+<!--                        break;-->
+<!--                    case 1:-->
+<!--                        data['题目'] = cell.textContent;-->
+<!--                        break;-->
+<!--                    case 2:-->
+<!--                        if (count < 7) {-->
+<!--                            data['次'] = parseInt(cell.textContent) + 1; // 将次数加1-->
+<!--                            cell.textContent = data['次']; // 更新表格中的次数显示-->
+<!--                        }-->
+<!--                        break;-->
+<!--                    case 3:-->
+<!--                        var today = new Date();-->
+<!--                        var reviewDate = new Date();-->
+<!--                        switch (count + 1) {-->
+<!--                            case 2:-->
+<!--                                reviewDate.setDate(today.getDate() + 2);-->
+<!--                                break;-->
+<!--                            case 3:-->
+<!--                                reviewDate.setDate(today.getDate() + 3);-->
+<!--                                break;-->
+<!--                            case 4:-->
+<!--                                reviewDate.setDate(today.getDate() + 8);-->
+<!--                                break;-->
+<!--                            case 5:-->
+<!--                                reviewDate.setDate(today.getDate() + 15);-->
+<!--                                break;-->
+<!--                            case 6:-->
+<!--                                reviewDate.setDate(today.getDate() + 60);-->
+<!--                                break;-->
+<!--                            default:-->
+<!--                                reviewDate = today;-->
+
+<!--                        }-->
+<!--                        var reviewDateString = reviewDate.toISOString().slice(0, 10);-->
+<!--                        data['复习时间'] = reviewDateString;-->
+<!--                        cell.textContent = reviewDateString;-->
+<!--                        if (count < 7) {-->
+<!--                            cell.textContent = reviewDateString;-->
+<!--                        } else {-->
+<!--                            cell.textContent = '完成了'-->
+<!--                        }-->
+<!--                        break;-->
+<!--                    case 4:-->
+<!--                        data['开始时间'] = cell.textContent;-->
+<!--                        break;-->
+<!--                    default:-->
+<!--                        break;-->
+<!--                }-->
+<!--            });-->
+<!--            sendTable(data);-->
+<!--        }-->
+<!--        function addtable() {-->
+<!--            var id = document.getElementsByName('id')[0].value;-->
+<!--            var tbody = $('#table tbody');-->
+<!--            var existingRow = tbody.find('td:first-child:contains(' + id + ')').parent();-->
+<!--            if (!existingRow.length) {-->
+<!--                // 如果没有，发送 AJAX 请求获取题目信息-->
+<!--                $.ajax({-->
+<!--                    url: '/get_problem?id=' + id,-->
+<!--                    type: 'GET',-->
+<!--                    success: function (data) {-->
+<!--                        // 将返回的数据添加到表格中-->
+<!--                        var newRow = $('<tr></tr>');-->
+<!--                        newRow.append($('<td></td>').text(data.id));-->
+<!--                        newRow.append($('<td></td>').html('<a href="' + data.link + '">' + data.title + '</a>'));-->
+<!--                        newRow.append($('<td></td>').text('1'));-->
+<!--                        var today = new Date();-->
+<!--                        var reviewDate = new Date(today.getTime() + 24 * 60 * 60 * 1000); // 初始复习时间为明天-->
+<!--                        newRow.append($('<td></td>').text(reviewDate.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')));-->
+<!--                        newRow.append($('<td></td>').text(today.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')));-->
+<!--                        newRow.append($('<td></td>').html('<input type="button" value="更新" onclick="updateTabl(' + data.id + ')">'));-->
+<!--                        tbody.prepend(newRow);-->
+<!--                        // 发送数据到服务器更新表格-->
+<!--                        var data = {-->
+<!--                            '题号': parseInt(data.id),-->
+<!--                            '题目': data.title,-->
+<!--                            '次': '1',-->
+<!--                            '复习时间': reviewDate.getFullYear() + '-' + (reviewDate.getMonth() + 1) + '-' + reviewDate.getDate(),-->
+<!--                            '开始时间': reviewDate.getFullYear() + '-' + (reviewDate.getMonth() + 1) + '-' + reviewDate.getDate(),-->
+<!--                            '网址': data.link-->
+
+<!--                        };-->
+<!--                        sendTable(data);-->
+<!--                    },-->
+<!--                });-->
+<!--            } else {-->
+<!--                // 如果有，将该行移动到表格的第一行-->
+<!--                existingRow.insertBefore(tbody.find('tr:first'));-->
+<!--            }-->
+<!--        }-->
+<!--        function sendTable(data) {-->
+<!--            $.ajax({-->
+<!--                url: '/update_table',-->
+<!--                type: 'POST',-->
+<!--                contentType: 'application/json',-->
+<!--                data: JSON.stringify(data),-->
+<!--                success: function (data) {-->
+<!--                    console.log(data);-->
+<!--                },-->
+<!--                error: function (error) {-->
+<!--                    console.error(error);-->
+<!--                }-->
+<!--            });-->
+<!--        }-->
+<!--        function updateProblemInfo() {-->
+<!--            var id = document.getElementsByName('id')[0].value;-->
+<!--            // 发送 AJAX 请求-->
+<!--            $.ajax({-->
+<!--                url: `/get_problem?id=${id}`,-->
+<!--                type: 'GET',-->
+<!--                success: function (data) {-->
+<!--                    // 将返回的数据更新到页面中-->
+<!--                    $('#problem-info').html(`<h3><a href="${data.link}">${data.title}</a></h3>`);-->
+
+<!--                    // 隐藏状态消息-->
+<!--                    $('#status').empty();-->
+<!--                },-->
+<!--                error: function (xhr, status, error) {-->
+<!--                    console.error(error);-->
+<!--                    $('#problem-info').empty();-->
+<!--                    $('#status').text('获取题目信息失败，请检查题目号是否正确！');-->
+<!--                }-->
+<!--            });-->
+<!--        }-->
+<!--    </script>-->
+<!--    <script>-->
+<!--        // 获取当前日期-->
+<!--        var today = new Date();-->
+<!--        var year = today.getFullYear();-->
+<!--        var month = today.getMonth() + 1;-->
+<!--        var day = today.getDate();-->
+
+<!--        // 将日期设置为 yyyy-mm-dd 格式-->
+<!--        if (month < 10) {-->
+<!--            month = "0" + month;-->
+<!--        }-->
+<!--        if (day < 10) {-->
+<!--            day = "0" + day;-->
+<!--        }-->
+<!--        var todayFormatted = year + "-" + month + "-" + day;-->
+
+<!--        // 将日期设置为日期输入框的默认值-->
+<!--        document.getElementById("date-input").defaultValue = todayFormatted;-->
+<!--    </script>-->
+<!--</body>-->
+
+</html>

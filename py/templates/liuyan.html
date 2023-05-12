@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        form input[type="text"], form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+        }
+
+        form input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+
+
+
+        table th, table td {
+            padding: 10px;
+            word-wrap: break-word;  /* 文本超宽自动换行 */
+        }
+
+        .message {
+            position: relative;
+            font-size: 14px;
+        }
+
+        .message .time {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            font-size: 12px;
+            color: #999;
+        }
+    </style>
+
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="shortcut icon" type="image/png"
+        href="https://cdn.acwing.com/media/user/profile/photo/208081_lg_445d4bbb9e.png" />
+    <style>
+        /* 默认样式 */
+        .column {
+            display: none;
+            width: 0%;
+        }
+
+        /* 当浏览器宽度大于等于600px时显示中间一列 */
+        @media screen and (min-width: 1200px) {
+            .column {
+                display: block;
+                width: 100%;
+            }
+        }
+        @media screen and (max-width: 1200px) {
+        .colu {
+            display: none;
+            width: 0%;
+        }
+    }
+    </style>
+</head>
+
+<body>
+    <div id="header">
+        <img src="{{ url_for('static', filename='zt.png') }}"
+            style="display: block; margin: 0 auto; width: 25%; height: auto;">
+        {{ top|safe }}
+    </div>
+    <table style="width: 100%; table-layout: fixed;">
+        <colgroup>
+            <col class="colu" style="width: 15%;">
+            <col style="width: 70%;">
+            <col class="colu" style="width: 15%;">
+        </colgroup>
+        <tr>
+
+            <td class="column" style="vertical-align: top;">
+                <br>
+                <div id="sidebar">
+                    {{ table|safe }}
+                </div>
+                <br>
+                <div id="sidebar2">
+                    {{ table2|safe }}
+                </div>
+            </td>
+
+            <td style="vertical-align: top;">
+    <h1>留言板</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <div style="width: 98%; margin: 0 auto;">
+            <input type="text" name="name" placeholder="名称" style="width: 99%;">
+            <textarea name="message" placeholder="留言内容" style="width: 99%; margin: 10px auto;"></textarea>
+        </div>
+        <div style="width: 98%; margin: 0 auto; display: flex; justify-content: space-between;">
+            <input type="submit" value="提交留言" style="width: 30%;">
+            <input type="file" name="image">
+        </div>
+    </form>
+
+     <h2>留言列表</h2>
+                <!-- 留言列表 -->
+                <div style="width: 100%; margin: 0 auto;">
+                    <table style="width: 100%; table-layout: fixed;">
+                        <tr>
+                            <th style="font-size: smaller;">留言内容</th>
+                        </tr>
+                        {% for message in messages %}
+<tr>
+    {% if not message.editing %}
+    <td class="message" style="word-wrap: break-word; white-space: normal; text-align: left;">
+        {{ message[1] }}：<br>{{ message[2] }}：<br>
+        {% if message[4] %}
+        <img src="data:image/jpeg;base64,{{ message[4] }}" alt="Image" style="max-width: 100%;">
+        {% endif %}
+        <div style="text-align: right;font-size: 6px;">
+            <a href="{{ modify_url }}">修改</a> |
+            <a href="/liuyan/delete/{{ message[0] }}">删除</a> |
+            {{ message[3] }}
+        </div>
+    </td>
+    {% else %}
+    <td class="message" style="word-wrap: break-word; white-space: normal; text-align: left;">
+        <form method="POST" action="{{ modify_url }}">
+            <textarea name="message" placeholder="留言内容" style="width: 99%; margin: 10px auto;">{{ message[2] }}</textarea>
+            <input type="submit" value="保存">
+        </form>
+    </td>
+    {% endif %}
+</tr>
+{% endfor %}
+                    </table>
+                </div>
+            </td> <!-- 第3列为空 -->
+         <td class="column" style="vertical-align: top;">
+                <h2>留言列表</h2>
+                <!-- 留言列表 -->
+                <div style="width: 100%; margin: 0 auto;">
+                    <table style="width: 100%; table-layout: fixed;">
+                        <tr>
+                            <th style="font-size: smaller;">留言内容</th>
+                        </tr>
+                        {% for message in messages %}
+                        <tr>
+                            <td class="message" style="word-wrap: break-word; white-space: normal; text-align: left;">
+                                {{ message[1] }}：<br>{{ message[2] }}<br>
+                                <div style="text-align: right;font-size: 6px;">
+                                    {{ message[3] }}
+                                </div>
+                            </td>
+                        </tr>
+                        {% if message[4] %}
+                        <tr>
+                            <td>
+                                <img src="data:image/jpeg;base64,{{ message[4] }}" alt="Image" style="max-width: 100%;">
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </table>
+                </div>
+            </td> <!-- 第3列为空 -->
+        </tr>
+    </table>
+</body>
+</html>

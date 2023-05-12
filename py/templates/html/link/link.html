@@ -1,0 +1,81 @@
+<!-- display.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>网址导航</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            padding: 5px;
+        }
+
+body {
+    text-align: center;
+}
+
+
+    </style>
+</head>
+<body>
+{% set urls_by_category = get_urls_by_category %}
+
+<h1>网址导航</h1>
+
+{% for category in categories %}
+    <h2>{{ category['name'] }}</h2>
+    <table>
+        <tr>
+            {% for url in urls_by_category(category['id']) %}
+                <td>
+  <a href="{{ url['url'] }}" target="_blank" onclick="incrementClickCount(event, '{{ url['url'] }}', {{ url['id'] }})">
+                        {{ url['title'] }}
+                    </a>
+                </td>
+                {% if loop.index % 5 == 0 %}
+                    </tr><tr>
+                {% endif %}
+            {% endfor %}
+        </tr>
+    </table>
+{% endfor %}
+
+<script>
+    // 打开链接并增加点击量
+function incrementClickCount(event, url, urlId) {
+            event.preventDefault();
+
+        // Send an AJAX request to increment the click count
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/increase_click_count/' + urlId);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    // Increment the click count in the UI
+                    const clickCountElements = document.getElementsByClassName('click-count');
+                    for (let i = 0; i < clickCountElements.length; i++) {
+                        if (clickCountElements[i].dataset.urlId == urlId) {
+                            clickCountElements[i].textContent = parseInt(clickCountElements[i].textContent) + 1;
+                            break;
+                        }
+                    }
+
+                    // Open the link in a new window
+                    window.open(url, '_blank');
+                } else {
+                    console.error('Failed to increment click count.');
+                }
+            }
+        };
+        xhr.send(JSON.stringify({})); // Send an empty payload
+    }
+
+</script>
+
+</body>
+</html>
