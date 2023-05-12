@@ -5,12 +5,12 @@ from . import db,Category, URL
 
 link_bp = Blueprint('link', __name__, url_prefix='/link')
 
-@link_bp.route('/admin')
-def index():
+@link_bp.route('/admin', methods=['GET'])
+def admin():
     categories = Category.query.all()
     return render_template('/html/link/index.html', categories=categories)
 
-@link_bp.route('/', methods=['GET'])
+@link_bp.route('/')
 def link():
 
     categories = Category.query.all()
@@ -23,7 +23,7 @@ def add_category():
     category = Category(name=name)
     db.session.add(category)
     db.session.commit()
-    return redirect('/admin')
+    return redirect(url_for('link.admin'))
 
 
 @link_bp.route('/delete_category/<int:category_id>', methods=['POST'])
@@ -31,10 +31,10 @@ def delete_category(category_id):
     category = Category.query.get(category_id)
     db.session.delete(category)
     db.session.commit()
-    return redirect('/admin')
+    return redirect(url_for('link.admin'))
 
 
-@link_bp.route('/edit_category/<int:category_id>', methods=['PUT'])
+@link_bp.route('/edit_category/<int:category_id>', methods=['POST'])
 def edit_category(category_id):
     category = db.session.query(Category).get(category_id)
     new_name = request.get_json(force=True, silent=True)['name']
@@ -60,7 +60,7 @@ def add_url():
         new_url = URL(title=title, url=url, category=category)
         db.session.add(new_url)
         db.session.commit()
-    return redirect('/admin')
+    return redirect(url_for('link.admin'))
 
 
 @link_bp.route('/delete_url/<int:url_id>', methods=['POST'])
@@ -68,7 +68,7 @@ def delete_url(url_id):
     url = db.session.query(URL).get(url_id)
     db.session.delete(url)
     db.session.commit()
-    return redirect('/admin')
+    return redirect(url_for('link.admin'))
 
 
 @link_bp.route('/edit_url', methods=['POST'])
