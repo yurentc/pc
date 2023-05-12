@@ -1,11 +1,9 @@
+#py/link.py
 from flask import Flask, render_template, request, redirect, session, Blueprint, url_for,current_app
 from flask_sqlalchemy import SQLAlchemy
-from .database import db,Link,Category
+from . import db,Category, URL
 
-
-link_bp = Blueprint('link', __name__)
-
-
+link_bp = Blueprint('link', __name__, url_prefix='/link')
 
 @link_bp.route('/admin')
 def index():

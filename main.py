@@ -3,7 +3,7 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 from vikas import VikaTable
 import datetime
-from pa import get_title_by_id
+from 爬取数据.qz.qze.py.pa import get_title_by_id
 from 爬取数据.qz.py.htmlj import generate_table,generate_lstable,top
 from db import geyan_delete, geyan_add, get_all_quotes, messagess,send_messages,delete_messages
 from 爬取数据.qz.py.link import link_bp

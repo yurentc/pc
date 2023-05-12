@@ -2,7 +2,7 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for,Blueprint
 from vikas import VikaTable
 import datetime
-from pa import get_title_by_id
+from .pa import get_title_by_id
 from .htmlj import generate_table,generate_lstable,top
 from db import get_geyan, geyan_delete, geyan_add, get_all_quotes,get_db,messagess,send_messages,delete_messages
 from jinja2 import Environment, FileSystemLoader
