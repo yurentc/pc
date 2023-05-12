@@ -35,4 +35,5 @@ qz/
 ├── vikas.py                                   # main配套的维格表
 └── 励志名言.db                         # 励志名言数据库
 
-刚学python flask所以工程管理有点乱，导致用了3个数据库，但是现在link.py单独使用的时候可以正常显示，没有BUG，但是通过蓝图就没办法显示了，我现在不清楚怎么弄了，你还需要什么文件的代码告诉我
+我想把名人格言的数据库脚本放到py文件夹下，数据库想用app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///link.db'，放在__init__.py里面，
+想把获得格言放在get_geyan()，geyan_add()，geyan_delete()放在htmlj.py 文件里，messagess()，send_messages(name, message)delete_messages(message_id)放在main.py里，代码应该怎么写

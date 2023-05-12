@@ -15,13 +15,7 @@ import sqlite3
 
 main_bp = Blueprint('main', __name__)
 
-# app = Flask(__name__, static_folder='static')
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///links.db'
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-#
-# db.init_app(app)
-#
-# app.register_blueprint(link_bp, url_prefix='/link')
+
 
 
 
