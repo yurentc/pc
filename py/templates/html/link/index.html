@@ -1,61 +1,44 @@
-<!-- index.html -->
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <title>网址导航</title>
-    <style>
-        table, th, td {
-            padding: 1px;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <title>链接管理</title>
 </head>
 <body>
-{% set urls_by_category = get_urls_by_category %}
-
-<h1>网址导航</h1>
-
-<h2>分类管理</h2>
-<form action="/link/add_category" method="POST">
-    <input type="text" name="name" placeholder="分类名称" required>
-    <button type="submit">添加分类</button>
-</form>
-
-<ul>
+<table>
+    <tr>
+        <td>分类名称</td>
+        <td><input type="text" id="category_name"></td>
+        <td><button onclick="addCategory()">添加分类</button></td>
+    </tr>
+    <tr>
+        <td>分类</td>
+        <td>网站名</td>
+        <td>网址</td>
+        <td>点击数量</td>
+        <td>操作</td>
+    </tr>
     {% for category in categories %}
-
-<li data-category-id="{{ category['id'] }}">
-  <span class="category-name">{{ category['name'] }}</span>
-  <a href="/link" class="edit-link" onclick="editCategory(event, {{ category['id'] }})">&#9998;</a>
-  <a href="/link/delete_category/{{ category['id'] }}" onclick="event.preventDefault(); deleteCategory(event, {{ category['id'] }})">❌</a>
-    <a> </a>
-</li>
-
-    <li>
-        <table>
+        <tr>
+            <td>{{ category.name }}</td>
+            <td><a href="javascript:;" onclick="editCategory({{ category.id }})">编辑</a></td>
+            <td><a href="javascript:;" onclick="deleteCategory({{ category.id }})">删除</a></td>
+        </tr>
+        {% for url in get_urls_by_category(category.id) %}
             <tr>
-                <th>网站名</th>
-                <th>链接</th>
-                <th>点击量</th>
-                <th colspan="2">操作</th>
+                <td></td>
+<td><input type="text" name="title" value="{{ url.title }}" required></td>
+<td><input type="url" name="url" value="{{ url.url }}" required></td>
+<input type="hidden" name="id" value="{{ url.id }}">
+                <td>{{ url.click_count }}</td>
+                <td>
+                    <a href="javascript:;" onclick="editURL({{ url.id }})">编辑</a>
+                    <a href="javascript:;" onclick="deleteURL({{ url.id }})">删除</a>
+                </td>
             </tr>
-
-            {% for url in urls_by_category(category['id'])|sort(attribute='click_count', reverse=True) %}
-            <tr>
-                <td>{{ url['title'] }}</td>
-           <td><a href="{{ url['url'] }}" target="_blank" onclick="incrementClickCount(event, '{{ url['url'] }}', {{ url['id'] }})">{{ url['url'] }}</a></td>
-    <td class="click-count">{{ url['click_count'] }}</td>
-
-<td>
- <a href="javascript:void(0)" onclick="editUrl({{ url.id }}, '{{ url.title }}', '{{ url.url }}')">✎</a>
-    <a href="/link/delete_url/{{ url['id'] }}" onclick="deleteURL(event, {{ url['id'] }})">❌</a>
-</td>
-
-
-            </tr>
-            {% endfor %}
-
-            <tr>
-                <td colspan="5">
+        {% endfor %}
+        <tr><td></td>
+                <td colspan="3">
                     <form action="/link/add_url" method="POST">
                         <input type="hidden" name="category_id" value="{{ category['id'] }}">
                         <input type="text" name="title" placeholder="网站名" required>
@@ -63,145 +46,75 @@
                         <button type="submit">+</button>
                     </form>
                 </td>
-            </tr>
-        </table>
-    </li>
+</tr>
     {% endfor %}
-</ul>
-
+    </table>
+</body>
 <script>
-    // 删除分类
-    function deleteCategory(event, categoryId) {
-        event.preventDefault();
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/link/delete_category/' + categoryId;
-            document.body.appendChild(form);
-            form.submit();
-    }
 
-    // 删除网址
-    function deleteURL(event, urlId) {
-        event.preventDefault();
-
-
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/link/delete_url/' + urlId;
-
-            document.body.appendChild(form);
-            form.submit();
-
-    }
-        // 增加点击量
-    // 增加点击量
-function incrementClickCount(event, url, urlId) {
-            event.preventDefault();
-
-        // Send an AJAX request to increment the click count
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', '/link/increase_click_count/' + urlId);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    // Increment the click count in the UI
-                    const clickCountElements = document.getElementsByClassName('click-count');
-                    for (let i = 0; i < clickCountElements.length; i++) {
-                        if (clickCountElements[i].dataset.urlId == urlId) {
-                            clickCountElements[i].textContent = parseInt(clickCountElements[i].textContent) + 1;
-                            break;
-                        }
-                    }
-
-                    // Open the link in a new window
-                    window.open(url, '_blank');
-                } else {
-                    console.error('Failed to increment click count.');
-                }
-            }
-        };
-        xhr.send(JSON.stringify({})); // Send an empty payload
-    }
-
-// JavaScript 代码
-function editCategory(event, categoryId) {
-  event.preventDefault();
-
-  // 获取要编辑的分类元素以及分类名称元素
-  const categoryElement = event.target.parentNode;
-  const categoryNameElement = categoryElement.querySelector('.category-name');
-
-
-  // 隐藏分类名称和编辑按钮元素
-  categoryNameElement.style.display = 'none';
-  event.target.style.display = 'none';
-
-  // 创建一个输入框元素
-  const inputElement = document.createElement('input');
-  inputElement.type = 'text';
-  inputElement.name = 'name';
-  inputElement.value = categoryNameElement.textContent.trim();
-  inputElement.required = true;
-
-  // 创建一个保存按钮元素
-  const saveButtonElement = document.createElement('button');
-  saveButtonElement.type = 'button';
-  saveButtonElement.textContent = '💾';
-
-  // 将输入框和保存按钮添加到分类元素中
-  categoryElement.appendChild(inputElement);
-  categoryElement.appendChild(saveButtonElement);
-
-  saveButtonElement.addEventListener('click', () => {
-    // 获取输入框中的新类别名称
-    const newCategoryName = inputElement.value.trim();
-
-    if (newCategoryName !== '') {
-      // 发送PUT请求，将新的类别名称更新到服务器端
-      fetch(`/link/edit_category/${categoryId}`, {
+function editCategory(id) {
+    var name = prompt('请输入新的分类名:');
+    fetch('/link/edit_category/' + id, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({name: name})
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.querySelector('td:first-of-type').innerText = data.name;
+    })
+}
+
+function addCategory() {
+    var name = document.getElementById('category_name').value;
+    fetch('/link/add_category', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'name=' + name
+    })
+    .then(res => res.text())
+    .then(data => location.reload())
+}
+
+function deleteCategory(id) {
+    fetch('/link/delete_category/' + id, {
+        method: 'POST'
+    })
+    .then(res => res.text())
+    .then(data => location.reload())
+}
+
+function editURL(id) {
+var title = document.querySelector('input[name="title"][value="' + url.id + '"]').value;
+var url = document.querySelector('input[name="url"][value="' + url.id + '"]').value;
+    fetch('/link/edit_url', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          name: newCategoryName
+            url_id: id,
+            title: title,
+            url: url
         })
-      })
-      .then(response => response.json())
-      .then(data => {
-        // 更新页面上的类别名称
-        categoryNameElement.textContent = data.name;
-        categoryNameElement.style.display = 'inline';
-        event.target.style.display = 'inline';
-
-        // 移除输入框和保存按钮
-        categoryElement.removeChild(inputElement);
-        categoryElement.removeChild(saveButtonElement);
-      })
-      .catch(error => {
-        console.error(error);
-        alert('编辑分类失败，请重试！');
-      });
-    }
-  });
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.querySelector('input[name="title"][value="' + id + '"]').value = data.title;
+document.querySelector('input[name="url"][value="' + id + '"]').value = data.url;
+    })
 }
 
-
-function editUrl(urlId, urlTitle, urlUrl) {
-  const titleInputElement = document.querySelector('input[name="title"]');
-  const urlInputElement = document.querySelector('input[name="url"]');
-
-  titleInputElement.value = urlTitle;
-  urlInputElement.value = urlUrl;
-
-  // 调用 deleteURL 函数
- // deleteURL(event, urlId);
+function deleteURL(id) {
+    fetch('/link/delete_url/' + id, {
+        method: 'POST'
+    })
+    .then(res => res.text())
+    .then(data => location.reload())
 }
-
 </script>
-
-
-</body>
 </html>
-

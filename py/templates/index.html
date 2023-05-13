@@ -202,7 +202,6 @@
                         var today = new Date();
                         var reviewDate = new Date(today.getTime() + 24 * 60 * 60 * 1000); // 初始复习时间为明天
                         newRow.append($('<td></td>').text(reviewDate.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')));
-                        newRow.append($('<td></td>').text(today.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')));
                         newRow.append($('<td></td>').html('<input type="button" value="更新" onclick="updateTabl(' + data.id + ')">'));
                         tbody.prepend(newRow);
                         // 发送数据到服务器更新表格

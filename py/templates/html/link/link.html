@@ -17,32 +17,44 @@
 body {
     text-align: center;
 }
-
+        #management-link {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 12px;
+            color: #999;
+            text-decoration: none;
+        }
 
     </style>
 </head>
 <body>
 {% set urls_by_category = get_urls_by_category %}
-
+<table style="width: 800px; table-layout: fixed;">
+    <tr><td colspan="5">
+<a id="management-link" href="/link/admin">管理</a>
 <h1>网址导航</h1>
-
+</td></tr>
 {% for category in categories %}
-    <h2>{{ category['name'] }}</h2>
-    <table>
-        <tr>
-            {% for url in urls_by_category(category['id']) %}
-                <td>
-  <a href="{{ url['url'] }}" target="_blank" onclick="incrementClickCount(event, '{{ url['url'] }}', {{ url['id'] }})">
-                        {{ url['title'] }}
-                    </a>
-                </td>
-                {% if loop.index % 5 == 0 %}
-                    </tr><tr>
-                {% endif %}
-            {% endfor %}
-        </tr>
-    </table>
+    <tr>
+        <td colspan="5">
+            <h2>{{ category['name'] }}</h2>
+        </td>
+    </tr>
+    <tr>
+        {% for url in urls_by_category(category['id']) %}
+            <td style="width: {{ 800 // 5 }}px;">
+                <a href="{{ url['url'] }}" target="_blank" onclick="incrementClickCount(event, '{{ url['url'] }}', {{ url['id'] }})">
+                    {{ url['title'] }}
+                </a>
+            </td>
+            {% if loop.index % 5 == 0 %}
+                </tr><tr>
+            {% endif %}
+        {% endfor %}
+    </tr>
 {% endfor %}
+</table>
 
 <script>
     // 打开链接并增加点击量
